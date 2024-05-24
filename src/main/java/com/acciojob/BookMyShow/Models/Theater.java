@@ -18,6 +18,7 @@ public class Theater {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int theaterId;
 
+    @Column(unique = true)
     private String theaterName;
 
     private String address;

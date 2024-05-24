@@ -7,6 +7,8 @@ import com.acciojob.BookMyShow.Repositories.UserRepository;
 import com.acciojob.BookMyShow.Requests.AddUserRequest;
 import com.acciojob.BookMyShow.Responses.BookingHistoryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,12 +23,28 @@ public class UserService {
     @Autowired
     private TicketRepository ticketRepository;
 
+    @Autowired
+    private JavaMailSender javaMailSender;
+
     public String addUser(AddUserRequest userRequest) {
+
          User user = User.builder().userName(userRequest.getUserName())
                  .age(userRequest.getAge())
                  .phoneNumber(userRequest.getPhoneNumber())
                  .emailId(userRequest.getEmailId())
                  .build();
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(userRequest.getEmailId());
+        mailMessage.setFrom("springoptional@gmail.com");
+        mailMessage.setSubject("Welcome to Book My Show!");
+
+        String body = "Hello "+userRequest.getUserName()+ "\n" +"your BookMyShow account has been created successfully."+
+                "\n" + "Book tickets and enjoy watching new movies !" + "\n"+
+                "Thank you";
+        mailMessage.setText(body);
+
+        javaMailSender.send(mailMessage);
 
          userRepository.save(user);
 
